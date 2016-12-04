@@ -1,11 +1,6 @@
 (ns spec-swagger.core
-  (:require
-    [clojure.spec :as s]
-    [spec-tools.core :as st]
-    #?@(:clj  [
-    [clojure.spec.gen :as gen]]
-        :cljs [[clojure.test.check.generators]
-               [cljs.spec.impl.gen :as gen]])))
+  (:require [clojure.spec :as s]
+            [spec-tools.core :as st]))
 
 (s/def ::external-docs
   (st/coll-spec
