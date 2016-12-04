@@ -7,8 +7,6 @@
         :cljs [[clojure.test.check.generators]
                [cljs.spec.impl.gen :as gen]])))
 
-(def response-code (s/or :number (s/int-in 100 600) :default #{:default}))
-
 (s/def ::external-docs
   (st/coll-spec
     ::external-docs
@@ -34,9 +32,9 @@
 
 (s/def ::header-object any?)
 
-(s/def ::schema any?)
+(s/def ::spec any?)
 
-(s/def ::operations (st/set-of #{:get :put :post :delete :options :head :patch}))
+(def response-code (s/or :number (s/int-in 100 600) :default #{:default}))
 
 (s/def ::operation
   (st/coll-spec
@@ -48,22 +46,22 @@
      (st/opt :operationId) string?
      (st/opt :consumes) #{string?}
      (st/opt :produces) #{string?}
-     (st/opt :parameters) {:query ::schema
-                           :header ::schema
-                           :path ::schema
-                           :formData ::schema
-                           :body ::schema}
+     (st/opt :parameters) {:query ::spec
+                           :header ::spec
+                           :path ::spec
+                           :formData ::spec
+                           :body ::spec}
      (st/opt :responses) {response-code {(st/opt :description) string?
-                                         (st/opt :schema) ::schema
+                                         (st/opt :schema) ::spec
                                          (st/opt :headers) {string? ::header-object}
                                          (st/opt :examples) {string? any?}}}
      (st/opt :schemes) (st/set-of #{"http", "https", "ws", "wss"})
      (st/opt :deprecated) boolean?
      (st/opt :security) ::security-requirements}))
 
-(s/def ::spec
+(s/def ::swagger
   (st/coll-spec
-    ::spec
+    ::swagger
     {:swagger (st/eq "2.0")
      :info {:title string?
             (st/opt :description) string?
@@ -79,16 +77,7 @@
      (st/opt :schemes) (st/set-of #{"http", "https", "ws", "wss"})
      (st/opt :consumes) #{string?}
      (st/opt :produces) #{string?}
-     (st/opt :paths) {string? {;(st/opt :$ref)
-                               (st/opt :get) ::operation
-                               (st/opt :put) ::operation
-                               (st/opt :post) ::operation
-                               (st/opt :delete) ::operation
-                               (st/opt :options) ::operation
-                               (st/opt :head) ::operation
-                               (st/opt :patch) ::operation
-                               ;(st/opt :parameters)
-                               }}
+     (st/opt :paths) {string? {#{:get :put :post :delete :options :head :patch} ::operation}}
      ;(st/opt :definitions) map?
      ;(st/opt :parameters) map?
      ;(st/opt :responses) map?
@@ -101,4 +90,5 @@
 
 (comment
   (clojure.pprint/pprint
-    (last (map first (s/exercise ::spec 10)))))
+    (last (map first (s/exercise ::swagger 10)))))
+
