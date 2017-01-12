@@ -1,5 +1,5 @@
 (defproject metosin/spec-swagger "0.1.0-SNAPSHOT"
-  :description "Common utilities for clojure.spec"
+  :description "Tools for writing Swagger with clojure.spec"
   :url "https://github.com/metosin/spec-swagger"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"
@@ -7,7 +7,7 @@
             :comments "same as Clojure"}
   :dependencies [[metosin/spec-tools "0.1.0-SNAPSHOT"]]
   :codeina {:target "doc"
-            :src-uri "http://github.com/metosin/spec-swagger/blob/master/"
+            :src-uri "https://github.com/metosin/spec-swagger/blob/master/"
             :src-uri-prefix "#L"}
 
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]

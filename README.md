@@ -1,6 +1,6 @@
 # spec-swagger [![Build Status](https://travis-ci.org/metosin/spec-swagger.svg?branch=master)](https://travis-ci.org/metosin/spec-swagger) [![Dependencies Status](https://jarkeeper.com/metosin/spec-tools/status.svg)](https://jarkeeper.com/metosin/spec-swagger)
 
-Clojure(Script) implementation of [Swagger]([metosin/spec-tools "0.1.0-SNAPSHOT"]) with [clojure.spec](http://clojure.org/about/spec).
+Clojure(Script) implementation of [Swagger](http://swagger.io) with [clojure.spec](http://clojure.org/about/spec).
 
 Status: **Alpha** (as spec is still alpha too).
 
@@ -10,10 +10,11 @@ Status: **Alpha** (as spec is still alpha too).
 
 ## Features
 
-**TODO**
+* clojure.spec spec for Swagger specs
+* creating [Ring](https://github.com/ring-clojure/ring) handlers from Swagger specs
 
 ## License
 
-Copyright © 2016 [Metosin Oy](http://www.metosin.fi)
+Copyright © 2016-2017 [Metosin Oy](http://www.metosin.fi)
 
 Distributed under the Eclipse Public License, the same as Clojure.
