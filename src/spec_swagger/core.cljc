@@ -1,5 +1,7 @@
 (ns spec-swagger.core
   (:require [clojure.spec :as s]
+            [#?(:clj clojure.spec.gen :cljs clojure.spec.impl.gen) :as gen]
+            [clojure.string :as string]
             [spec-tools.core :as st]))
 
 (s/def ::external-docs

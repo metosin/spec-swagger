@@ -12,6 +12,7 @@ Status: **Alpha** (as spec is still alpha too).
 
 * clojure.spec spec for Swagger specs
 * creating [Ring](https://github.com/ring-clojure/ring) handlers from Swagger specs
+* creating Swagger schemas from clojure.spec specs
 
 ## License
 
