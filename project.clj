@@ -6,7 +6,7 @@
             :distribution :repo
             :comments "same as Clojure"}
   :dependencies [[metosin/spec-tools "0.1.0-SNAPSHOT"]]
-  :codeina {:target "doc"
+  :codeina {:target "gh-pages/doc"
             :src-uri "https://github.com/metosin/spec-swagger/blob/master/"
             :src-uri-prefix "#L"}
 
