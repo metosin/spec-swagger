@@ -22,6 +22,7 @@
                                   [org.clojure/test.check "0.9.0"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [com.gfredericks/test.chuck "0.2.7"]
+                                  [metosin/ring-swagger "0.22.14"]
                                   [metosin/scjsv "0.4.0"]]}
              :perf {:jvm-opts ^:replace ["-server"]}}
   :aliases {"all" ["with-profile" "dev"]
@@ -42,5 +43,5 @@
                         :compiler {:output-to "target/node_out/test.js"
                                    :output-dir "target/node_out"
                                    :main spec-swagger.doo-runner
-                                   :optimizations :none 
+                                   :optimizations :none
                                    :target :nodejs}}]})
