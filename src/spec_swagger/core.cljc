@@ -104,4 +104,3 @@
                            :responses {200 {:schema ::new-user}}}}}})
 
 (assert (s/valid? ::swagger sample))
-

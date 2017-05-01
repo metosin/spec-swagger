@@ -6,11 +6,11 @@
    #?(:clj [ring.swagger.validator :as v])))
 
 (deftest test-simple
-  (are [x y] (= (swagger-schema (s/spec x)) y)
-    int? {:type "integer"}
+  (are [x y] (= y (swagger-schema (s/spec x)))
+    int? {:type "integer", :format "int64"}
     float? {:type "number" :format "float"}
     (s/and int? pos?)
-    {:allOf [{:type "integer"} {:minimum 0 :exclusiveMinimum true}]}))
+    {:allOf [{:type "integer", :format "int64"} {:minimum 0 :exclusiveMinimum true}]}))
 
 #?(:clj
    (do

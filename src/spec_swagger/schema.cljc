@@ -5,7 +5,7 @@
   schemas are based on JSON Schema, but it lacks some of JSON Schema's features
   while having some that are not found in JSON Schema."
   (:require [spec-tools.json-schema :as json-schema]
-            [spec-tools.visitor :as visitor :refer [visit]]))
+            [spec-tools.visitor :as visitor]))
 
 (defn- unwrap
   "Unwrap [x] to x. Asserts that coll has exactly one element."
@@ -40,4 +40,4 @@
   satisfies the spec should satisfy the resulting schema, but the converse is
   not true."
   [spec]
-  (visit spec accept-spec))
+  (visitor/visit spec accept-spec))
