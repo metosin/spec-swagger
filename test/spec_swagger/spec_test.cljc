@@ -1,7 +1,7 @@
-(ns spec-swagger.core-test
+(ns spec-swagger.spec-test
   (:require [clojure.test :refer [deftest testing is]]
             [clojure.spec :as s]
-            [spec-swagger.core :as ss]))
+            [spec-swagger.spec :as ss]))
 
 (deftest swagger-test
   (testing "gen works"

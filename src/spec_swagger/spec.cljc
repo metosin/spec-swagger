@@ -1,4 +1,4 @@
-(ns spec-swagger.core
+(ns spec-swagger.spec
   (:require [clojure.spec :as s]
             [spec-tools.data-spec :as ds]))
 
