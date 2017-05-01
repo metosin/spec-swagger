@@ -1,91 +1,107 @@
 (ns spec-swagger.core
   (:require [clojure.spec :as s]
-            [#?(:clj clojure.spec.gen :cljs clojure.spec.impl.gen) :as gen]
-            [clojure.string :as string]
-            [spec-tools.core :as st]))
+            [spec-tools.data-spec :as ds]))
 
 (s/def ::external-docs
-  (st/coll-spec
+  (ds/spec
     ::external-docs
-    {(st/opt :description) string?
+    {(ds/opt :description) string?
      :url string?}))
 
 (s/def ::security-definitions
-  (st/coll-spec
+  (ds/spec
     ::security-definitions
-    {string? {:type (st/enum "basic" "apiKey" "oauth2")
-              (st/opt :description) string?
-              (st/opt :name) string?
-              (st/opt :in) (st/enum "query" "header")
-              (st/opt :flow) (st/enum "implicit" "password" "application" "accessCode")
-              (st/opt :authorizationUrl) string?
-              (st/opt :tokenUrl) string?
-              (st/opt :scopes) {string? string?}}}))
+    {string? {:type (s/spec #{"basic" "apiKey" "oauth2"})
+              (ds/opt :description) string?
+              (ds/opt :name) string?
+              (ds/opt :in) (s/spec #{"query" "header"})
+              (ds/opt :flow) (s/spec #{"implicit" "password" "application" "accessCode"})
+              (ds/opt :authorizationUrl) string?
+              (ds/opt :tokenUrl) string?
+              (ds/opt :scopes) {string? string?}}}))
 
 (s/def ::security-requirements
-  (st/coll-spec
+  (ds/spec
     ::security-requirements
     {string? [string?]}))
 
 (s/def ::header-object any?)
 
-(s/def ::spec any?)
+(s/def ::spec qualified-keyword?)
 
-(def response-code (s/or :number (s/int-in 100 600) :default #{:default}))
+(s/def ::response-code (s/or :number (s/int-in 100 600) :default #{:default}))
+
+(s/def ::response
+  (ds/spec
+    ::response
+    {(ds/opt :description) string?
+     (ds/opt :schema) ::spec
+     (ds/opt :headers) {string? ::header-object}
+     (ds/opt :examples) {string? any?}}))
 
 (s/def ::operation
-  (st/coll-spec
+  (ds/spec
     ::operation
-    {(st/opt :tags) [string?]
-     (st/opt :summary) string?
-     (st/opt :description) string?
-     (st/opt :externalDocs) ::external-docs
-     (st/opt :operationId) string?
-     (st/opt :consumes) #{string?}
-     (st/opt :produces) #{string?}
-     (st/opt :parameters) {:query ::spec
-                           :header ::spec
-                           :path ::spec
-                           :formData ::spec
-                           :body ::spec}
-     (st/opt :responses) {response-code {(st/opt :description) string?
-                                         (st/opt :schema) ::spec
-                                         (st/opt :headers) {string? ::header-object}
-                                         (st/opt :examples) {string? any?}}}
-     (st/opt :schemes) (st/set-of #{"http", "https", "ws", "wss"})
-     (st/opt :deprecated) boolean?
-     (st/opt :security) ::security-requirements}))
+    {(ds/opt :tags) [string?]
+     (ds/opt :summary) string?
+     (ds/opt :description) string?
+     (ds/opt :externalDocs) ::external-docs
+     (ds/opt :operationId) string?
+     (ds/opt :consumes) #{string?}
+     (ds/opt :produces) #{string?}
+     (ds/opt :parameters) {(ds/opt :query) ::spec
+                           (ds/opt :header) ::spec
+                           (ds/opt :path) ::spec
+                           (ds/opt :formData) ::spec
+                           (ds/opt :body) ::spec}
+     (ds/opt :responses) (s/map-of ::response-code ::response)
+     (ds/opt :schemes) (s/coll-of #{"http", "https", "ws", "wss"} :into #{})
+     (ds/opt :deprecated) boolean?
+     (ds/opt :security) ::security-requirements}))
 
 (s/def ::swagger
-  (st/coll-spec
+  (ds/spec
     ::swagger
-    {:swagger (st/eq "2.0")
+    {:swagger (s/spec #{"2.0"})
      :info {:title string?
-            (st/opt :description) string?
-            (st/opt :termsOfService) string?
-            (st/opt :contact) {(st/opt :name) string?
-                               (st/opt :url) string?
-                               (st/opt :email) string?}
-            (st/opt :license) {:name string?
-                               (st/opt :url) string?}
+            (ds/opt :description) string?
+            (ds/opt :termsOfService) string?
+            (ds/opt :contact) {(ds/opt :name) string?
+                               (ds/opt :url) string?
+                               (ds/opt :email) string?}
+            (ds/opt :license) {:name string?
+                               (ds/opt :url) string?}
             :version string?}
-     (st/opt :host) string?
-     (st/opt :basePath) string?
-     (st/opt :schemes) (st/set-of #{"http", "https", "ws", "wss"})
-     (st/opt :consumes) #{string?}
-     (st/opt :produces) #{string?}
-     (st/opt :paths) {string? {#{:get :put :post :delete :options :head :patch} ::operation}}
-     ;(st/opt :definitions) map?
-     ;(st/opt :parameters) map?
-     ;(st/opt :responses) map?
-     (st/opt :securityDefinitions) ::security-definitions
-     (st/opt :security) ::security-requirements
-     (st/opt :tags) [{:name string?
-                      (st/opt :description) string?
-                      (st/opt :externalDocs) ::external-docs}]
-     (st/opt :externalDocs) ::external-docs}))
+     (ds/opt :host) string?
+     (ds/opt :basePath) string?
+     (ds/opt :schemes) (s/coll-of #{"http", "https", "ws", "wss"} :into #{})
+     (ds/opt :consumes) #{string?}
+     (ds/opt :produces) #{string?}
+     (ds/opt :paths) {string? {#{:get :put :post :delete :options :head :patch} ::operation}}
+     ;(ds/opt :definitions) map?
+     ;(ds/opt :parameters) map?
+     ;(ds/opt :responses) map?
+     (ds/opt :securityDefinitions) ::security-definitions
+     (ds/opt :security) ::security-requirements
+     (ds/opt :tags) [{:name string?
+                      (ds/opt :description) string?
+                      (ds/opt :externalDocs) ::external-docs}]
+     (ds/opt :externalDocs) ::external-docs}))
 
-(comment
-  (clojure.pprint/pprint
-    (last (map first (s/exercise ::swagger 10)))))
+(let [user {:id int?
+            :name string?
+            :address {:street string?
+                      :zip string?}}
+      new-user (dissoc user :id)]
+  (s/def ::user (ds/spec ::user user))
+  (s/def ::new-user (ds/spec ::user new-user)))
+
+(def sample
+  {:swagger "2.0"
+   :info {:title "swagger-spec test"
+          :version "1.0"}
+   :paths {"/users" {:get {:parameters {:body ::user}
+                           :responses {200 {:schema ::new-user}}}}}})
+
+(assert (s/valid? ::swagger sample))
 

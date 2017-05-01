@@ -2,13 +2,13 @@
 
 Clojure(Script) implementation of [Swagger](http://swagger.io) with [clojure.spec](http://clojure.org/about/spec).
 
-Status: **Alpha** (as spec is still alpha too).
+Status: Work-in-progress & **Alpha** (as spec is still alpha too).
 
 ## Latest version
 
 [![Clojars Project](http://clojars.org/metosin/spec-swagger/latest-version.svg)](http://clojars.org/metosin/spec-swagger)
 
-## Features
+## Planned Features
 
 * clojure.spec spec for Swagger specs
 * creating [Ring](https://github.com/ring-clojure/ring) handlers from Swagger specs
