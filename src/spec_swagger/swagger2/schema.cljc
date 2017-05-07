@@ -1,4 +1,4 @@
-(ns spec-swagger.schema
+(ns spec-swagger.swagger2.schema
   "Generate a Swagger schema from a clojure.spec spec.
 
   If you want to generate a JSON Schema, look at spec-tools.json-schema. Swagger
@@ -33,7 +33,7 @@
 (defmethod accept-spec ::default [dispatch spec children]
   (json-schema/accept-spec dispatch spec children))
 
-(defn swagger-schema
+(defn transform
   "Generate Swagger schema matching the given clojure.spec spec.
 
   Since clojure.spec is more expressive than Swagger schemas, everything that

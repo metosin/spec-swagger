@@ -1,12 +1,12 @@
-(ns spec-swagger.schema-test
+(ns spec-swagger.swagger2.schema-test
   (:require
    [clojure.test :refer [deftest testing are]]
    [clojure.spec :as s]
-   [spec-swagger.schema :refer [swagger-schema]]
+   [spec-swagger.swagger2.schema :refer [transform]]
    #?(:clj [ring.swagger.validator :as v])))
 
 (deftest test-simple
-  (are [x y] (= y (swagger-schema (s/spec x)))
+  (are [x y] (= y (transform (s/spec x)))
     int? {:type "integer", :format "int64"}
     float? {:type "number" :format "float"}
     (s/and int? pos?)
@@ -15,7 +15,7 @@
 #?(:clj
    (do
      (defn validate [spec]
-       (let [schema (swagger-schema spec)
+       (let [schema (transform spec)
              structure {:swagger "2.0"
                         :info {:title "" :version ""}
                         :paths {"/hello" {:get {:responses {200 {:description "" :schema schema}}}}}}]

@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments "same as Clojure"}
-  :dependencies [[metosin/spec-tools "0.1.0-SNAPSHOT"]]
+  :dependencies [[metosin/spec-tools "0.1.0"]]
   :codeina {:target "gh-pages/doc"
             :src-uri "https://github.com/metosin/spec-swagger/blob/master/"
             :src-uri-prefix "#L"}
@@ -13,7 +13,7 @@
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]
                              [funcool/codeina "0.5.0"]
                              [lein-doo "0.1.7"]
-                             [lein-cljsbuild "1.1.5"]]
+                             [lein-cljsbuild "1.1.6"]]
                    :jvm-opts ^:replace ["-server"]
                    ;:global-vars {*warn-on-reflection* true}
                    :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
@@ -22,7 +22,7 @@
                                   [org.clojure/test.check "0.9.0"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [com.gfredericks/test.chuck "0.2.7"]
-                                  [metosin/ring-swagger "0.22.14"]
+                                  [metosin/ring-swagger "0.23.0"]
                                   [metosin/scjsv "0.4.0"]]}
              :perf {:jvm-opts ^:replace ["-server"]}}
   :aliases {"all" ["with-profile" "dev"]

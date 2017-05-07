@@ -1,4 +1,4 @@
-(ns spec-swagger.spec
+(ns spec-swagger.swagger2.spec
   (:require [clojure.spec :as s]
             [spec-tools.data-spec :as ds]))
 
@@ -87,20 +87,3 @@
                       (ds/opt :description) string?
                       (ds/opt :externalDocs) ::external-docs}]
      (ds/opt :externalDocs) ::external-docs}))
-
-(let [user {:id int?
-            :name string?
-            :address {:street string?
-                      :zip string?}}
-      new-user (dissoc user :id)]
-  (s/def ::user (ds/spec ::user user))
-  (s/def ::new-user (ds/spec ::user new-user)))
-
-(def sample
-  {:swagger "2.0"
-   :info {:title "swagger-spec test"
-          :version "1.0"}
-   :paths {"/users" {:get {:parameters {:body ::user}
-                           :responses {200 {:schema ::new-user}}}}}})
-
-(assert (s/valid? ::swagger sample))
