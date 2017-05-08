@@ -13,6 +13,32 @@
 (s/def ::address (s/keys :req-un [::street ::city]))
 (s/def ::user (s/keys :req-un [::id ::name ::address]))
 
+(deftest expand-test
+  (testing "::extension"
+    (is (= {:x-my/thing 42}
+           (swagger/transform
+             {:my/thing 42}))))
+  (testing "::schema"
+    (is (= {:schema
+            {:type "object",
+             :properties {"id" {:type "string"},
+                          "name" {:type "string"},
+                          "address" {:type "object",
+                                     :properties {"street" {:type "string"}
+                                                  "city" {:enum [:tre :hki]}},
+                                     :required ["street" "city"]}},
+             :required ["id" "name" "address"]}}
+           (swagger/transform
+             {::swagger/schema ::user}))))
+  (testing "::paramters"
+    (is (= {:parameters [{:in "query", :name "", :description "", :type "string", :required false}
+                         {:in "query", :name "", :description "", :type "string", :required false}
+                         {:in "path", :name "", :description "", :type "string", :required true}]}
+           (swagger/transform
+             {::swagger/parameters
+              {:query (s/keys :opt-un [::name ::street])
+               :path (s/keys :req [::id])}})))))
+
 (def data
   {:swagger "2.0"
    :info {:version "1.0.0"

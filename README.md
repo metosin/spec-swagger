@@ -19,9 +19,9 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 `swagger/tranform` function postwalks and transforms data into a valid [Swagger2 Spec](http://swagger.io/specification/) format. Rules:
 
 * by default, data is passed as-is, allowing any valid swagger spec to be used
-* all qualified map keys and their values are passed to `swagger/expand` multimethod
+* for qualified map keys, `swagger/expand` multimethod is invoked with the key, value and the map as arguments
   * dispatches on the key
-  * returns `nil` (remove the key from the map) or a map that get's merged in
+  * returns a map that get's merged in
   * defaults to `::swagger/extension`
 
 Predifined dispatch keys below.

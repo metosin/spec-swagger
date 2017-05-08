@@ -1,6 +1,6 @@
 (ns spec-swagger.swagger2.core
   (:require [clojure.walk :as walk]
-            [spec-swagger.swagger2.schema :as json-schema]))
+            [spec-swagger.swagger2.schema :as schema]))
 
 ;;
 ;; extract swagger2 parameters
@@ -9,7 +9,7 @@
 (defmulti extract-parameter (fn [in _] in))
 
 (defmethod extract-parameter :body [_ spec]
-  (let [schema (json-schema/transform spec)]
+  (let [schema (schema/transform spec)]
     [{:in "body"
       :name ""
       :description ""
@@ -18,7 +18,7 @@
 
 ;; TODO: ensure it's a s/keys
 (defmethod extract-parameter :default [in spec]
-  (let [{:keys [properties required]} (json-schema/transform spec)]
+  (let [{:keys [properties required]} (schema/transform spec)]
     (mapv
       (fn [[k {:keys [type]}]]
         {:in (name in)
@@ -32,15 +32,15 @@
 ;; expand the spec
 ;;
 
-(defmulti expand (fn [k _] k) :default ::extension)
+(defmulti expand (fn [k _ _] k) :default ::extension)
 
-(defmethod expand ::extension [k v]
+(defmethod expand ::extension [k v _]
   {(keyword (str "x-" (namespace k) "/" (name k))) v})
 
-(defmethod expand ::schema [_ v]
-  {:schema (json-schema/transform v)})
+(defmethod expand ::schema [_ v _]
+  {:schema (schema/transform v)})
 
-(defmethod expand ::parameters [_ v]
+(defmethod expand ::parameters [_ v _]
   {:parameters (into [] (mapcat (fn [[in spec]] (extract-parameter in spec)) v))})
 
 (defn expand-qualified-keywords [x f]
@@ -49,8 +49,8 @@
       (if (map? x)
         (reduce-kv
           (fn [acc k v]
-            (if-let [m (if (qualified-keyword? k) (f k v))]
-              (-> acc (dissoc k) (merge m))
+            (if (qualified-keyword? k)
+              (-> acc (dissoc k) (merge (f k v acc)))
               acc))
           x
           x)
