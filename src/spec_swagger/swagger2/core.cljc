@@ -37,7 +37,7 @@
 (defmethod expand ::extension [k v]
   {(keyword (str "x-" (namespace k) "/" (name k))) v})
 
-(defmethod expand ::spec [_ v]
+(defmethod expand ::schema [_ v]
   {:schema (json-schema/transform v)})
 
 (defmethod expand ::parameters [_ v]

@@ -33,7 +33,7 @@
                                ::kikka 42
                                ::swagger/parameters {:path (s/keys :req [::id])
                                                      :body ::user}
-                               :responses {200 {::swagger/spec ::user
+                               :responses {200 {::swagger/schema ::user
                                                 :description "Found it!"}
                                            404 {:description "Ohnoes."}}}}}})
 

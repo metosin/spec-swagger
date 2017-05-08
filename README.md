@@ -36,7 +36,7 @@ Transforms the the key into valid [swagger vendor extension](http://swagger.io/s
 ; {:x-my/thing 42}
 ```
 
-### `::swagger/spec`
+### `::swagger/schema`
 
 Value should be a `clojure.spec/Spec` or name of a spec. Returns a map with key `:schema` and value transformed into swagger json schema format. Mostly used under [Response Object](http://swagger.io/specification/#responsesObject).
 
@@ -50,7 +50,7 @@ Value should be a `clojure.spec/Spec` or name of a spec. Returns a map with key 
     {:post
      {:responses
       {200
-       {::swagger/spec ::user}}}}}})
+       {::swagger/schema ::user}}}}}})
 ; {:paths
 ;  {"echo"
 ;   {:post
