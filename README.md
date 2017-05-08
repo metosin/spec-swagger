@@ -16,27 +16,29 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 (require '[spec-swagger.swagger2.core :as swagger])
 ```
 
-`swagger/tranform` function postwalks and transforms data into valid [Swagger2 Spec](http://swagger.io/specification/) format. Input data is in extended Swagger2 Spec format, enabling arbitrary transformations:
+`swagger/tranform` function postwalks and transforms data into a valid [Swagger2 Spec](http://swagger.io/specification/) format. Rules:
 
 * by default, data is passed as-is, allowing any valid swagger spec to be used
-* all qualified map keys and their values are transformed with `spec-swagger.swagger2.core/expand` multimethod with key as a dispatch value.
-    * `swagger/expand` defaults to `::swagger/extension`
-    * instead of using the `swagger/expand`, users can also pass in their own callback as an optional argument to `swagger/transform`, of type `key value => [key value]`.
-* below is a list of preregistered dispatch keys.
+* all qualified map keys and their values are passed to `swagger/expand` multimethod
+  * dispatches on the key
+  * returns `nil` (remove the key from the map) or a map that get's merged in
+  * defaults to `::swagger/extension`
+
+Predifined dispatch keys below.
 
 ### `::swagger/extension`
 
-Transforms the the key as valid [swagger vendor extension](http://swagger.io/specification/#vendorExtensions) by prepending a `x-` to it. Value is not touched. Note: Vendor extansions are allowed in only some parts of the spec: refer the spec or validate the end results.
+Transforms the the key into valid [swagger vendor extension](http://swagger.io/specification/#vendorExtensions) by prepending a `x-` to it's namespace. Value is not touched.
 
 ```clj
 (swagger/transform
-  {::kikka 42})
-; {::x-kikka 42}
+  {:my/thing 42})
+; {:x-my/thing 42}
 ```
 
 ### `::swagger/spec`
 
-Value should be a `clojure.spec/Spec` or name of a spec. Key is tranformed into `:schema` and value into swagger json schema format. Mostly used under [Response Object](http://swagger.io/specification/#responsesObject).
+Value should be a `clojure.spec/Spec` or name of a spec. Returns a map with key `:schema` and value transformed into swagger json schema format. Mostly used under [Response Object](http://swagger.io/specification/#responsesObject).
 
 ```clj
 (s/def ::name string?)
@@ -47,21 +49,24 @@ Value should be a `clojure.spec/Spec` or name of a spec. Key is tranformed into 
    {"echo"
     {:post
      {:responses
-      {200 {::swagger/spec ::user}}}}}})
+      {200
+       {::swagger/spec ::user}}}}}})
 ; {:paths
 ;  {"echo"
 ;   {:post
 ;    {:responses
-;     {200 {:schema {:type "object"
-;                    :properties {"name" {:type "string"}}
-;                    :required ["name"]}}}}}}}
+;     {200
+;      {:schema
+;       {:type "object"
+;        :properties {"name" {:type "string"}}
+;        :required ["name"]}}}}}}}
 ```
 
 ### `::swagger/parameters`
 
-`clojure.spec` models for input parameters. Value should be a map containing optional keys `:body`, `:query`, `:path`, `:header` and `:formData`. For all but `:body`, the value should be a `s/keys` spec (e.g. describing the ring parameters). With `:body`, the value can be any `clojure.spec/Spec` or name of a spec.
+Value should be a map with optional keys `:body`, `:query`, `:path`, `:header` and `:formData`. For all but `:body`, the value should be a `s/keys` spec (describing the ring parameters). With `:body`, the value can be any `clojure.spec/Spec` or name of a spec.
 
-Key is transformed into `:parameters` and value into vector of valid swagger [Parameter Objects](http://swagger.io/specification/#parameterObject).
+Returns a map with key `:parameters` with value of vector of swagger [Parameter Objects](http://swagger.io/specification/#parameterObject).
 
 ```clj
 (swagger/transform

@@ -30,6 +30,7 @@
            "/user/:id" {:post {:summary "User Api"
                                :description "User Api description"
                                :tags ["user"]
+                               ::kikka 42
                                ::swagger/parameters {:path (s/keys :req [::id])
                                                      :body ::user}
                                :responses {200 {::swagger/spec ::user
