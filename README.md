@@ -20,9 +20,8 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 
 * by default, data is passed as-is, allowing any valid swagger spec to be used
 * for qualified map keys, `swagger/expand` multimethod is invoked with the key, value and the map as arguments
-  * dispatches on the key
-  * returns a map that get's merged in
-  * defaults to `::swagger/extension`
+  * dispatches on the key, defaulting to `::swagger/extension`
+  * returns a map that get's merged in to original map, without the dispatched key
 
 Predifined dispatch keys below.
 
