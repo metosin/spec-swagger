@@ -70,22 +70,28 @@ Returns a map with key `:parameters` with value of vector of swagger [Parameter 
 
 ```clj
 (swagger/transform
-  {::swagger/parameters
-   {:query (s/keys :opt-un [::name])
-    :body ::user}})
-; {:parameters
-;  [{:in "query"
-;    :name ""
-;    :description ""
-;    :type "string"
-;    :required false}
-;   {:in "body"
-;    :name ""
-;    :description ""
-;    :required true
-;    :schema {:type "object"
-;             :properties {"name" {:type "string"}}
-;             :required ["name"]}}]}
+  {:paths
+   {"echo"
+    {:post
+     {::swagger/parameters
+      {:query (s/keys :opt-un [::name])
+       :body ::user}}}}})
+; {:paths
+;  {"echo"
+;   {:post
+;    {:parameters
+;     [{:in "query"
+;       :name ""
+;       :description ""
+;       :type "string"
+;       :required false}
+;      {:in "body"
+;       :name ""
+;       :description ""
+;       :required true
+;       :schema {:type "object"
+;                :properties {"name" {:type "string"}}
+;                :required ["name"]}}]}}}}
 ```
 
 ### Full example
