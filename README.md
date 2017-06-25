@@ -37,7 +37,7 @@ Transforms the the key into valid [swagger vendor extension](http://swagger.io/s
 
 ### `::swagger/schema`
 
-Value should be a `clojure.spec/Spec` or name of a spec. Returns a map with key `:schema` and value transformed into swagger json schema format. Mostly used under [Response Object](http://swagger.io/specification/#responsesObject).
+Value should be a `clojure.spec.alpha/Spec` or name of a spec. Returns a map with key `:schema` and value transformed into swagger json schema format. Mostly used under [Response Object](http://swagger.io/specification/#responsesObject).
 
 ```clj
 (s/def ::name string?)
@@ -63,7 +63,7 @@ Value should be a `clojure.spec/Spec` or name of a spec. Returns a map with key 
 
 ### `::swagger/parameters`
 
-Value should be a map with optional keys `:body`, `:query`, `:path`, `:header` and `:formData`. For all but `:body`, the value should be a `s/keys` spec (describing the ring parameters). With `:body`, the value can be any `clojure.spec/Spec` or name of a spec.
+Value should be a map with optional keys `:body`, `:query`, `:path`, `:header` and `:formData`. For all but `:body`, the value should be a `s/keys` spec (describing the ring parameters). With `:body`, the value can be any `clojure.spec.alpha/Spec` or name of a spec.
 
 Returns a map with key `:parameters` with value of vector of swagger [Parameter Objects](http://swagger.io/specification/#parameterObject).
 
@@ -97,7 +97,7 @@ Returns a map with key `:parameters` with value of vector of swagger [Parameter 
 
 ```clj
 (require '[spec-swagger.swagger2.core :as swagger])
-(require '[clojure.spec :as s])
+(require '[clojure.spec.alpha :as s])
 
 (s/def ::id string?)
 (s/def ::name string?)

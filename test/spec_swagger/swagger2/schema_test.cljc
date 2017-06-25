@@ -1,7 +1,7 @@
 (ns spec-swagger.swagger2.schema-test
   (:require
    [clojure.test :refer [deftest testing are]]
-   [clojure.spec :as s]
+   [clojure.spec.alpha :as s]
    [spec-swagger.swagger2.schema :refer [transform]]
    #?(:clj [ring.swagger.validator :as v])))
 

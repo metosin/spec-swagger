@@ -13,25 +13,25 @@
   {:pre [(= 1 (count coll))]}
   (first coll))
 
-(defn- spec-dispatch [dispatch spec children] dispatch)
+(defn- spec-dispatch [dispatch spec children options] dispatch)
 (defmulti accept-spec spec-dispatch :default ::default)
 
-(defmethod accept-spec 'clojure.core/float? [_ _ _] {:type "number" :format "float"})
-(defmethod accept-spec 'clojure.core/double? [_ _ _] {:type "number" :format "double"})
+(defmethod accept-spec 'clojure.core/float? [_ _ _ _] {:type "number" :format "float"})
+(defmethod accept-spec 'clojure.core/double? [_ _ _ _] {:type "number" :format "double"})
 
-(defmethod accept-spec 'clojure.spec/or [dispatch spec children]
+(defmethod accept-spec 'clojure.spec.alpha/or [dispatch spec children options]
   ;; :anyOf is not supported by Swagger 2.0, so we just give up. In principle,
   ;; we could do better in some special cases. For example, a reasonable schema
   ;; for (s/or ::int int? ::str string?) would be {:type ["number", "string"]}.
   {})
 
-(defmethod accept-spec 'clojure.spec/nilable [dispatch spec children]
+(defmethod accept-spec 'clojure.spec.alpha/nilable [dispatch spec children options]
   ;; Neither :oneOf nor {:type "null"} are supported by Swagger 2.0, so we just
   ;; give up.
   {})
 
-(defmethod accept-spec ::default [dispatch spec children]
-  (json-schema/accept-spec dispatch spec children))
+(defmethod accept-spec ::default [dispatch spec children options]
+  (json-schema/accept-spec dispatch spec children options))
 
 (defn transform
   "Generate Swagger schema matching the given clojure.spec spec.
@@ -39,5 +39,7 @@
   Since clojure.spec is more expressive than Swagger schemas, everything that
   satisfies the spec should satisfy the resulting schema, but the converse is
   not true."
-  [spec]
-  (visitor/visit spec accept-spec))
+  ([spec]
+    (transform spec nil))
+  ([spec options]
+   (visitor/visit spec accept-spec options)))

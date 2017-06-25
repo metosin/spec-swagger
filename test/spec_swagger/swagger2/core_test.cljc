@@ -2,7 +2,7 @@
   (:require
     [clojure.test :refer [deftest testing is are]]
     [spec-swagger.swagger2.core :as swagger]
-    [clojure.spec :as s]
+    [clojure.spec.alpha :as s]
     #?(:clj
     [ring.swagger.validator :as v])))
 
@@ -30,7 +30,7 @@
              :required ["id" "name" "address"]}}
            (swagger/transform
              {::swagger/schema ::user}))))
-  (testing "::paramters"
+  (testing "::parameters"
     (is (= {:parameters [{:in "query", :name "", :description "", :type "string", :required false}
                          {:in "query", :name "", :description "", :type "string", :required false}
                          {:in "path", :name "", :description "", :type "string", :required true}]}
