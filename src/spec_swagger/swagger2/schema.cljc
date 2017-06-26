@@ -13,11 +13,21 @@
 (defmethod accept-spec 'clojure.core/float? [_ _ _ _] {:type "number" :format "float"})
 (defmethod accept-spec 'clojure.core/double? [_ _ _ _] {:type "number" :format "double"})
 
-(defmethod accept-spec 'clojure.spec.alpha/or [_ _ _ _]
-  ;; :anyOf is not supported by Swagger 2.0, so we just give up. In principle,
+(defmethod accept-spec 'clojure.spec.alpha/or [_ _ children _]
+  ;; :anyOf is not supported by Swagger 2.0, so we just the the first child. In principle,
   ;; we could do better in some special cases. For example, a reasonable schema
   ;; for (s/or ::int int? ::str string?) would be {:type ["number", "string"]}.
-  {})
+  (assoc
+    (first children)
+    :x-anyOf children))
+
+(defmethod accept-spec 'clojure.spec.alpha/and [_ _ children _]
+  ;; :allOf is not supported by Swagger 2.0, so we take the first child. In principle,
+  ;; we could do better in some special cases. For example, a reasonable schema
+  ;; for (s/and int? string?) would be {:type ["number", "string"]}.
+  (assoc
+    (first children)
+    :x-oneOf children))
 
 ;; FIXME: resolve a real type, now - strings.
 (defmethod accept-spec ::visitor/set [_ _ children _]

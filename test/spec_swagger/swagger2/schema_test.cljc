@@ -6,11 +6,20 @@
    #?(:clj [ring.swagger.validator :as v])))
 
 (deftest test-simple
-  (are [x y] (= y (transform (s/spec x)))
+  (are [x y]
+    (= y (transform (s/spec x)))
     int? {:type "integer", :format "int64"}
     float? {:type "number" :format "float"}
-    (s/and int? pos?)
-    {:allOf [{:type "integer", :format "int64"} {:minimum 0 :exclusiveMinimum true}]}))
+    (s/and int? pos?) {:type "integer"
+                       :format "int64",
+                       :x-oneOf [{:type "integer"
+                                  :format "int64"}
+                                 {:minimum 0, :exclusiveMinimum true}]}
+    (s/or :int int? :pos pos?) {:type "integer"
+                                :format "int64",
+                                :x-anyOf [{:type "integer"
+                                           :format "int64"}
+                                          {:minimum 0, :exclusiveMinimum true}]}))
 
 #?(:clj
    (do
