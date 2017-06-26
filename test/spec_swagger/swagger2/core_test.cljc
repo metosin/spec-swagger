@@ -9,7 +9,7 @@
 (s/def ::id string?)
 (s/def ::name string?)
 (s/def ::street string?)
-(s/def ::city #{:tre :hki})
+(s/def ::city (s/nilable #{:tre :hki}))
 (s/def ::address (s/keys :req-un [::street ::city]))
 (s/def ::user (s/keys :req-un [::id ::name ::address]))
 
@@ -21,23 +21,38 @@
   (testing "::schema"
     (is (= {:schema
             {:type "object",
+             :title "spec-swagger.swagger2.core-test/user"
              :properties {"id" {:type "string"},
                           "name" {:type "string"},
                           "address" {:type "object",
+                                     :title "spec-swagger.swagger2.core-test/address"
                                      :properties {"street" {:type "string"}
-                                                  "city" {:enum [:tre :hki]}},
+                                                  "city" {:enum [:tre :hki], :type "string", :x-nullable true}},
                                      :required ["street" "city"]}},
              :required ["id" "name" "address"]}}
            (swagger/transform
              {::swagger/schema ::user}))))
   (testing "::parameters"
-    (is (= {:parameters [{:in "query", :name "", :description "", :type "string", :required false}
-                         {:in "query", :name "", :description "", :type "string", :required false}
-                         {:in "path", :name "", :description "", :type "string", :required true}]}
+    (is (= {:parameters [{:in "query", :name "name", :description "", :type "string", :required false}
+                         {:in "query", :name "street", :description "", :type "string", :required false}
+                         {:in "query", :name "city", :description "", :type "string", :required false, :enum [:tre :hki], :allowEmptyValue true}
+                         {:in "path", :name "spec-swagger.swagger2.core-test/id", :description "", :type "string", :required true}
+                         {:in "body",
+                          :name "",
+                          :description "",
+                          :required true,
+                          :schema {:type "object",
+                                   :title "spec-swagger.swagger2.core-test/address",
+                                   :properties {"street" {:type "string"},
+                                                "city" {:enum [:tre :hki],
+                                                        :type "string"
+                                                        :x-nullable true}},
+                                   :required ["street" "city"]}}]}
            (swagger/transform
              {::swagger/parameters
-              {:query (s/keys :opt-un [::name ::street])
-               :path (s/keys :req [::id])}})))))
+              {:query (s/keys :opt-un [::name ::street ::city])
+               :path (s/keys :req [::id])
+               :body ::address}})))))
 
 (def data
   {:swagger "2.0"

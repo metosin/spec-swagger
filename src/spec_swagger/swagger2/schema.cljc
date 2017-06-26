@@ -7,28 +7,27 @@
   (:require [spec-tools.json-schema :as json-schema]
             [spec-tools.visitor :as visitor]))
 
-(defn- unwrap
-  "Unwrap [x] to x. Asserts that coll has exactly one element."
-  [coll]
-  {:pre [(= 1 (count coll))]}
-  (first coll))
-
-(defn- spec-dispatch [dispatch spec children options] dispatch)
+(defn- spec-dispatch [dispatch _ _ _] dispatch)
 (defmulti accept-spec spec-dispatch :default ::default)
 
 (defmethod accept-spec 'clojure.core/float? [_ _ _ _] {:type "number" :format "float"})
 (defmethod accept-spec 'clojure.core/double? [_ _ _ _] {:type "number" :format "double"})
 
-(defmethod accept-spec 'clojure.spec.alpha/or [dispatch spec children options]
+(defmethod accept-spec 'clojure.spec.alpha/or [_ _ _ _]
   ;; :anyOf is not supported by Swagger 2.0, so we just give up. In principle,
   ;; we could do better in some special cases. For example, a reasonable schema
   ;; for (s/or ::int int? ::str string?) would be {:type ["number", "string"]}.
   {})
 
-(defmethod accept-spec 'clojure.spec.alpha/nilable [dispatch spec children options]
-  ;; Neither :oneOf nor {:type "null"} are supported by Swagger 2.0, so we just
-  ;; give up.
-  {})
+;; FIXME: resolve a real type, now - strings.
+(defmethod accept-spec ::visitor/set [_ _ children _]
+  ;; enums must be homegenous in swagger2, thus we need a type
+  {:enum children :type "string"})
+
+(defmethod accept-spec 'clojure.spec.alpha/nilable [_ _ children {:keys [type in]}]
+  (if (and (= type :parameter) (not= in :body))
+    (assoc (visitor/unwrap children) :allowEmptyValue true)
+    (assoc (visitor/unwrap children) :x-nullable true)))
 
 (defmethod accept-spec ::default [dispatch spec children options]
   (json-schema/accept-spec dispatch spec children options))

@@ -9,48 +9,49 @@
 (defmulti extract-parameter (fn [in _] in))
 
 (defmethod extract-parameter :body [_ spec]
-  (let [schema (schema/transform spec)]
+  (let [schema (schema/transform spec {:in :body, :type :parameter})]
     [{:in "body"
       :name ""
       :description ""
       :required true
       :schema schema}]))
 
-;; TODO: ensure it's a s/keys
 (defmethod extract-parameter :default [in spec]
-  (let [{:keys [properties required]} (schema/transform spec)]
+  (let [{:keys [properties required]} (schema/transform spec {:in in, :type :parameter})]
     (mapv
-      (fn [[k {:keys [type]}]]
-        {:in (name in)
-         :name ""
-         :description ""
-         :type type
-         :required (contains? (set required) k)})
+      (fn [[k {:keys [type] :as schema}]]
+        (merge
+          {:in (name in)
+           :name k
+           :description ""
+           :type type
+           :required (contains? (set required) k)}
+          schema))
       properties)))
 
 ;;
 ;; expand the spec
 ;;
 
-(defmulti expand (fn [k _ _] k) :default ::extension)
+(defmulti expand (fn [k _ _ _] k) :default ::extension)
 
-(defmethod expand ::extension [k v _]
+(defmethod expand ::extension [k v _ _]
   {(keyword (str "x-" (namespace k) "/" (name k))) v})
 
-(defmethod expand ::schema [_ v _]
-  {:schema (schema/transform v)})
+(defmethod expand ::schema [_ v _ _]
+  {:schema (schema/transform v {:type :schema})})
 
-(defmethod expand ::parameters [_ v _]
+(defmethod expand ::parameters [_ v _ _]
   {:parameters (into [] (mapcat (fn [[in spec]] (extract-parameter in spec)) v))})
 
-(defn expand-qualified-keywords [x f]
+(defn expand-qualified-keywords [x f options]
   (walk/postwalk
     (fn [x]
       (if (map? x)
         (reduce-kv
           (fn [acc k v]
             (if (qualified-keyword? k)
-              (-> acc (dissoc k) (merge (f k v acc)))
+              (-> acc (dissoc k) (merge (f k v acc options)))
               acc))
           x
           x)
@@ -64,6 +65,6 @@
 (defn transform
   "Transform spec-swagger spec into a swagger2 spec object."
   ([x]
-   (transform x expand))
-  ([x f]
-   (expand-qualified-keywords x f)))
+   (transform x nil))
+  ([x options]
+   (expand-qualified-keywords x expand options)))
