@@ -120,7 +120,7 @@
 
    (s/tuple integer? string?)
    {:type "array"
-    :items [{:type "integer"}]
+    :items {}
     :x-items [{:type "integer"} {:type "string"}]}
 
    (s/map-of string? clojure.core/integer?)

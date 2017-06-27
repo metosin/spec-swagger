@@ -44,7 +44,7 @@
 ;; heterogeneous lists not supported
 (defmethod accept-spec 'clojure.spec.alpha/tuple [_ _ children _]
   {:type "array"
-   :items [(first children)]
+   :items {}
    :x-items children})
 
 ;; FIXME: resolve a real type, now - strings.
