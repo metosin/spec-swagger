@@ -148,7 +148,7 @@
       (swagger/extract-parameter :body ::keys))))
 
 #?(:clj
-   (deftest test-schema-validation
+   (deftest test-parameter-validation
      (let [swagger-spec (fn [schema]
                           {:swagger "2.0"
                            :info {:title "" :version ""}
@@ -163,7 +163,6 @@
        (testing "all expectations pass the swagger spec validation"
          (doseq [[spec] exceptations]
            (is (= nil (-> spec swagger/transform swagger-spec v/validate))))))))
-
 
 (s/def ::id string?)
 (s/def ::name string?)
