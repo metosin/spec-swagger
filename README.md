@@ -29,17 +29,17 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 (swagger/transform float?)
 ; {:type "number" :format "float"}
 
-(swagger/transform (s/nilable string?) {:type :parameter})
-; {:type "string", :allowEmptyValue true}
-
+;; no "null" in swagger2
 (swagger/transform (s/nilable string?))
 ; {:type "string", :x-nullable true}
 
-;; sadly, we losing information here...
+;; special syntax just for parameters
+(swagger/transform (s/nilable string?) {:type :parameter})
+; {:type "string", :allowEmptyValue true}
+
+;; no "anyOf" in swagger2
 (swagger/transform (s/cat :int integer? :string string?))
 ; {:type "array"
-;  :minItems 2
-;  :maxItems 2
 ;  :items {:type "integer"
 ;          :x-anyOf [{:type "integer"}
 ;                    {:type "string"}]}}
