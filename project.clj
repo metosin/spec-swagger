@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments "same as Clojure"}
-  :dependencies [[metosin/spec-tools "0.1.0"]]
+  :dependencies [[metosin/spec-tools "0.3.0-SNAPSHOT"]]
   :codeina {:target "gh-pages/doc"
             :src-uri "https://github.com/metosin/spec-swagger/blob/master/"
             :src-uri-prefix "#L"}
@@ -16,8 +16,8 @@
                              [lein-cljsbuild "1.1.6"]]
                    :jvm-opts ^:replace ["-server"]
                    ;:global-vars {*warn-on-reflection* true}
-                   :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
-                                  [org.clojure/clojurescript "1.9.518"]
+                   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+                                  [org.clojure/clojurescript "1.9.562"]
                                   [criterium "0.4.4"]
                                   [org.clojure/test.check "0.9.0"]
                                   [org.clojure/tools.namespace "0.2.11"]

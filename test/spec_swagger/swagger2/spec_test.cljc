@@ -1,6 +1,6 @@
 (ns spec-swagger.swagger2.spec-test
   (:require [clojure.test :refer [deftest testing is]]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [spec-swagger.swagger2.spec :as ss]))
 
 (deftest swagger-test
