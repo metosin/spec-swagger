@@ -1,6 +1,6 @@
 # spec-swagger [![Build Status](https://travis-ci.org/metosin/spec-swagger.svg?branch=master)](https://travis-ci.org/metosin/spec-swagger) [![Dependencies Status](https://jarkeeper.com/metosin/spec-tools/status.svg)](https://jarkeeper.com/metosin/spec-swagger)
 
-Clojure(Script) lib to transform `clojure.spec` models into  [Swagger2](http://swagger.io) and [OpenAPI3](https://www.openapis.org/) formats.
+Small Clojure(Script) lib to transform `clojure.spec` models into  [Swagger2](http://swagger.io) and [OpenAPI3](https://www.openapis.org/) formats.
 
 Status: Work-in-progress & **Alpha** (as spec is still alpha too).
 
@@ -10,15 +10,46 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 
 [![Clojars Project](http://clojars.org/metosin/spec-swagger/latest-version.svg)](http://clojars.org/metosin/spec-swagger)
 
-## Swagger2 (work-in-progress)
+## Swagger2
 
 ```clj
 (require '[spec-swagger.swagger2.core :as swagger])
 ```
 
-`swagger/tranform` function postwalks and transforms data into a valid [Swagger2 Spec](http://swagger.io/specification/) format. Rules:
+### Spec transformations
 
-* by default, data is passed as-is, allowing any valid swagger spec to be used
+`swagger/transform` converts specs into Swagger2 JSON Schema. Transformation can be customized with the following optional options:
+
+  * `:type` - either `:parameter` or `:schema` (default)
+  * `:in` - one of: `:query`, `:header`, `:path`, `:body` or `:formData`.
+
+**NOTE**: As `clojure.spec` is more powerfull than the Swagger2 JSON Schema, we are losing some data in the transformation. Spec-swagger tries to retain all the informatin, via vendor extensions.
+
+```clj
+(swagger/transform float?)
+; {:type "number" :format "float"}
+
+(swagger/transform (s/nilable string?) {:type :parameter})
+; {:type "string", :allowEmptyValue true}
+
+(swagger/transform (s/nilable string?))
+; {:type "string", :x-nullable true}
+
+;; sadly, we losing information here...
+(swagger/transform (s/cat :int integer? :string string?))
+; {:type "array"
+;  :minItems 2
+;  :maxItems 2
+;  :items {:type "integer"
+;          :x-anyOf [{:type "integer"}
+;                    {:type "string"}]}}
+```
+
+### Swagger Spec generation
+
+`swagger/swagger-spec` function takes an spec-swagger data map and transforms it into a valid [Swagger2 Spec](http://swagger.io/specification/) format. Rules:
+
+* by default, spec-swagger data is passed through, allowing any valid swagger data to be used
 * for qualified map keys, `swagger/expand` multimethod is invoked with the key, value and the map as arguments
   * dispatches on the key, defaulting to `::swagger/extension`
   * returns a map that get's merged in to original map, without the dispatched key
@@ -30,7 +61,7 @@ Predifined dispatch keys below.
 Transforms the the key into valid [swagger vendor extension](http://swagger.io/specification/#vendorExtensions) by prepending a `x-` to it's namespace. Value is not touched.
 
 ```clj
-(swagger/transform
+(swagger/swagger-spec
   {:my/thing 42})
 ; {:x-my/thing 42}
 ```
@@ -43,7 +74,7 @@ Value should be a `clojure.spec.alpha/Spec` or name of a spec. Returns a map wit
 (s/def ::name string?)
 (s/def ::user (s/keys :req-un [::name]))
 
-(swagger/transform
+(swagger/swagger-spec
   {:paths
    {"echo"
     {:post
@@ -68,7 +99,7 @@ Value should be a map with optional keys `:body`, `:query`, `:path`, `:header` a
 Returns a map with key `:parameters` with value of vector of swagger [Parameter Objects](http://swagger.io/specification/#parameterObject).
 
 ```clj
-(swagger/transform
+(swagger/swagger-spec
   {:paths
    {"echo"
     {:post
@@ -106,7 +137,7 @@ Returns a map with key `:parameters` with value of vector of swagger [Parameter 
 (s/def ::address (s/keys :req-un [::street ::city]))
 (s/def ::user (s/keys :req-un [::id ::name ::address]))
 
-(swagger/transform
+(swagger/swagger-spec
   {:swagger "2.0"
    :info {:version "1.0.0"
           :title "Sausages"
