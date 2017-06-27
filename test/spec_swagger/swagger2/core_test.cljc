@@ -114,8 +114,6 @@
 
    (s/cat :int integer? :string string?)
    {:type "array"
-    :minItems 2
-    :maxItems 2
     :items {:type "integer"
             :x-anyOf [{:type "integer"}
                       {:type "string"}]}}
@@ -123,9 +121,7 @@
    (s/tuple integer? string?)
    {:type "array"
     :items [{:type "integer"}]
-    :x-items [{:type "integer"} {:type "string"}]
-    :minItems 2
-    :maxItems 2}
+    :x-items [{:type "integer"} {:type "string"}]}
 
    (s/map-of string? clojure.core/integer?)
    {:type "object", :additionalProperties {:type "integer"}}

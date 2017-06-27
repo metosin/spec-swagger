@@ -20,10 +20,10 @@ Plan is to eventually align this lib with [ring-swagger](https://github.com/meto
 
 `swagger/transform` converts specs into Swagger2 JSON Schema. Transformation can be customized with the following optional options:
 
-  * `:type` - either `:parameter` or `:schema` (default)
-  * `:in` - one of: `:query`, `:header`, `:path`, `:body` or `:formData`.
+  * `:type` - a target type, either `:parameter` ([Parameter Object](http://swagger.io/specification/#parameterObject)) or `:schema` ([Schema Object](http://swagger.io/specification/#schemaObject)). If value is not defined, `:schema` is assumed.
+  * `:in` - a parameter subtype, which is one of: `:query`, `:header`, `:path`, `:body` or `:formData`. See [Parameter Object](http://swagger.io/specification/#parameterObject) for details.
 
-**NOTE**: As `clojure.spec` is more powerfull than the Swagger2 JSON Schema, we are losing some data in the transformation. Spec-swagger tries to retain all the informatin, via vendor extensions.
+**NOTE**: As `clojure.spec` is more powerful than the Swagger2 JSON Schema, we are losing some data in the transformation. Spec-swagger tries to retain all the informatin, via vendor extensions.
 
 ```clj
 (swagger/transform float?)

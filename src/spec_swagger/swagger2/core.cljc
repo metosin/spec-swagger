@@ -16,10 +16,8 @@
 (defmethod accept-spec 'clojure.core/double? [_ _ _ _] {:type "number" :format "double"})
 (defmethod accept-spec 'clojure.core/nil? [_ _ _ _] {})
 
+;; anyOf is not supported
 (defmethod accept-spec 'clojure.spec.alpha/or [_ _ children _]
-  ;; :anyOf is not supported by Swagger 2.0, so we just the the first child. In principle,
-  ;; we could do better in some special cases. For example, a reasonable schema
-  ;; for (s/or ::int int? ::str string?) would be {:type ["number", "string"]}.
   (assoc
     (first children)
     :x-anyOf children))
@@ -39,8 +37,6 @@
 ;; anyOf is not supported
 (defmethod accept-spec 'clojure.spec.alpha/cat [_ _ children _]
   {:type "array"
-   :minItems (count children)
-   :maxItems (count children)
    :items (assoc
             (first children)
             :x-anyOf children)})
@@ -49,9 +45,7 @@
 (defmethod accept-spec 'clojure.spec.alpha/tuple [_ _ children _]
   {:type "array"
    :items [(first children)]
-   :x-items children
-   :minItems (count children)
-   :maxItems (count children)})
+   :x-items children})
 
 ;; FIXME: resolve a real type, now - strings.
 (defmethod accept-spec ::visitor/set [_ _ children _]
