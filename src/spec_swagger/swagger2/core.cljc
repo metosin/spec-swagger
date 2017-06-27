@@ -47,9 +47,8 @@
    :items {}
    :x-items children})
 
-;; FIXME: resolve a real type, now - strings.
+;; FIXME: resolve a real type, https://github.com/metosin/spec-tools/issues/60
 (defmethod accept-spec ::visitor/set [_ _ children _]
-  ;; enums must be homogeneous in swagger2, thus we need a type
   {:enum children :type "string"})
 
 (defmethod accept-spec 'clojure.spec.alpha/nilable [_ _ children {:keys [type in]}]
